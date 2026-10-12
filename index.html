@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>RANKFLOW — рапорты на повышение и снятие взыскания</title>
+    <meta
+      name="description"
+      content="Подготовка доказательств и рапорта на повышение в звании и снятие дисциплинарного взыскания. Загрузка скриншотов в Image Chest."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#eeece2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e100c" media="(prefers-color-scheme: dark)" />
+    <script>
+      // Тема до отрисовки, чтобы не мигало
+      (function () {
+        try {
+          var t = localStorage.getItem("rankflow_theme");
+          if (t !== "light" && t !== "dark") {
+            t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Sofia+Sans+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css?v=11" />
+  </head>
+  <body>
+    <!-- ======================= ВЕРХНЯЯ ПАНЕЛЬ ======================= -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="#" class="brand" onclick="return false;" aria-label="RANKFLOW, ВЧ №9170174">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 12 7l7 5.5"/><path d="M5 18.5 12 13l7 5.5"/></svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-name">RANKFLOW</span>
+            <span class="brand-unit">ВЧ 9170174</span>
+          </span>
+        </a>
+
+        <nav class="tabs" aria-label="Разделы">
+          <button type="button" class="tab active" id="nav-promotion" aria-current="page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 11-5-5-5 5"/><path d="m17 18-5-5-5 5"/></svg>
+            <span>Повышение</span>
+          </button>
+          <button type="button" class="tab" id="nav-sanctions">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>Снятие взыскания</span>
+          </button>
+          <button type="button" class="tab" id="nav-settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+            <span>Настройки</span>
+          </button>
+        </nav>
+
+        <div class="topbar-actions">
+          <a href="#settings" class="api-chip" id="api-status-header" title="Настройки Image Chest">
+            <span class="status-dot warning" id="api-status-dot"></span>
+            <span id="api-status-text">Image Chest</span>
+          </a>
+          <button type="button" class="icon-btn" id="theme-toggle" title="Сменить тему" aria-label="Сменить тему">
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================= ПОВЫШЕНИЕ ======================= -->
+    <main class="view-section active" id="view-promotion">
+      <div class="page-head">
+        <div class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span>Рапорт · форма повышения</div>
+        <h1 class="page-title">Повышение в звании</h1>
+        <p class="page-lede">Официальные критерии, скриншоты-доказательства и готовый BBCode-рапорт для форума — в одном месте.</p>
+      </div>
+
+      <section class="selector-panel" aria-label="Подразделение и звание">
+        <div class="selector-grid">
+          <div class="field">
+            <label for="promo-division-select" class="field-label">Подразделение</label>
+            <div class="select-wrap">
+              <select id="promo-division-select" class="select" autocomplete="off">
+                <option value="">Выберите подразделение</option>
+              </select>
+            </div>
+            <div class="field-hint" id="promo-division-sub-hint"></div>
+          </div>
+          <div class="field">
+            <label for="promo-rank-select" class="field-label">Текущее звание</label>
+            <div class="select-wrap">
+              <select id="promo-rank-select" class="select" autocomplete="off" disabled>
+                <option value="">Сначала подразделение</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="notice" role="note">
+          <svg class="notice-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>
+          <p class="notice-text" id="promo-warning">
+            Важно! При наличии дисциплинарного взыскания (устного выговора/письменного выговора), а также использовании подтверждающей документации находясь в предшествующей должности, в присвоении очередного воинского звания автоматически будет отказано.
+          </p>
+        </div>
+      </section>
+
+      <div class="empty-state-box" id="promo-empty-state">
+        <div class="empty-state-title">Выберите подразделение</div>
+        <ol class="howto">
+          <li><b>Подразделение и звание</b><span>Появятся официальные критерии на следующее звание.</span></li>
+          <li><b>Скриншоты</b><span>Перетащите, выберите или вставьте <kbd>Ctrl</kbd>+<kbd>V</kbd> в нужный пункт.</span></li>
+          <li><b>Image Chest</b><span>Одна кнопка — по одной ссылке на каждый критерий.</span></li>
+          <li><b>Рапорт</b><span>BBCode собирается сам, остаётся скопировать.</span></li>
+        </ol>
+      </div>
+
+      <div class="workspace">
+        <div class="workspace-main">
+          <section class="block" aria-labelledby="promo-crit-h">
+            <header class="block-head">
+              <span class="block-num">01</span>
+              <div>
+                <h2 class="block-title" id="promo-crit-h">Критерии</h2>
+                <p class="block-desc">Отметьте выполненное и прикрепите скриншоты. <kbd>Ctrl</kbd>+<kbd>V</kbd> вставляет в выделенный пункт.</p>
+              </div>
+            </header>
+            <div class="criteria-list" id="promo-criteria-list"></div>
+          </section>
+
+          <section class="block docs-section" id="promo-docs-section" style="display:none;" aria-labelledby="promo-docs-h">
+            <header class="block-head">
+              <span class="block-num">02</span>
+              <div>
+                <h2 class="block-title" id="promo-docs-h">Приложения</h2>
+                <p class="block-desc">Ксерокопии паспорта и трудовой книжки. Каждый документ — отдельный скрытый пост (hidden).</p>
+              </div>
+            </header>
+
+            <div class="criteria-list">
+              <div class="criterion-card doc-card" id="card-doc-passport" data-doc-type="passport">
+                <div class="crit-head">
+                  <span class="doc-mark" aria-hidden="true">П1</span>
+                  <div class="crit-body">
+                    <div class="crit-meta">
+                      <span class="evidence-count-badge" id="count-badge-doc-passport"></span>
+                      <span class="active-badge-indicator" id="doc-passport-active-tag" style="display:none;">Ctrl+V сюда</span>
+                    </div>
+                    <div class="criterion-text-body"><b>Ксерокопия паспорта</b> — все необходимые страницы</div>
+                  </div>
+                </div>
+                <div class="evidence-section">
+                  <div class="evidence-strip">
+                    <div class="preview-grid" id="preview-grid-doc-passport" style="display:none;"></div>
+                    <div class="dropzone-area" id="dropzone-doc-passport" tabindex="0" role="button" aria-label="Добавить страницы паспорта">
+                      <input type="file" multiple accept="image/*" hidden id="file-input-doc-passport" />
+                      <svg class="dz-plus" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                      <span class="dropzone-prompt">Добавить страницы</span>
+                      <span class="dropzone-sub">перетащите, нажмите или Ctrl+V</span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-upload-doc-passport" style="display:none;">Загрузить паспорт</button>
+                  </div>
+                  <div class="results-box" id="results-box-doc-passport" style="display:none;"></div>
+                </div>
+              </div>
+
+              <div class="criterion-card doc-card" id="card-doc-employment" data-doc-type="employment">
+                <div class="crit-head">
+                  <span class="doc-mark" aria-hidden="true">П2</span>
+                  <div class="crit-body">
+                    <div class="crit-meta">
+                      <span class="evidence-count-badge" id="count-badge-doc-employment"></span>
+                      <span class="active-badge-indicator" id="doc-employment-active-tag" style="display:none;">Ctrl+V сюда</span>
+                    </div>
+                    <div class="criterion-text-body"><b>Ксерокопия трудовой книжки</b> — записи о службе / контракте</div>
+                  </div>
+                </div>
+                <div class="evidence-section">
+                  <div class="evidence-strip">
+                    <div class="preview-grid" id="preview-grid-doc-employment" style="display:none;"></div>
+                    <div class="dropzone-area" id="dropzone-doc-employment" tabindex="0" role="button" aria-label="Добавить страницы трудовой книжки">
+                      <input type="file" multiple accept="image/*" hidden id="file-input-doc-employment" />
+                      <svg class="dz-plus" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                      <span class="dropzone-prompt">Добавить страницы</span>
+                      <span class="dropzone-sub">перетащите, нажмите или Ctrl+V</span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-upload-doc-employment" style="display:none;">Загрузить трудовую</button>
+                  </div>
+                  <div class="results-box" id="results-box-doc-employment" style="display:none;"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="block report-meta-section" id="promo-report-meta" style="display:none;" aria-labelledby="promo-meta-h">
+            <header class="block-head">
+              <span class="block-num">03</span>
+              <div>
+                <h2 class="block-title" id="promo-meta-h">Реквизиты</h2>
+                <p class="block-desc">Подставляются в рапорт. ФИО, должность и подпись запоминаются в этом браузере.</p>
+              </div>
+            </header>
+            <div class="form-panel report-meta-grid">
+              <div class="field f-fio">
+                <label for="report-fio-input" class="field-label">ФИО</label>
+                <input type="text" id="report-fio-input" class="input" placeholder="Иванов Иван Иванович" autocomplete="name" />
+              </div>
+              <div class="field f-date">
+                <label for="report-date-input" class="field-label">Дата</label>
+                <input type="text" id="report-date-input" class="input mono" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" />
+              </div>
+              <div class="field f-pos">
+                <label for="report-position-input" class="field-label">Должность</label>
+                <input type="text" id="report-position-input" class="input" placeholder="Стрелок отделения охраны" />
+              </div>
+              <div class="field f-rank">
+                <label for="report-rank-input" class="field-label">Звание</label>
+                <input type="text" id="report-rank-input" class="input" placeholder="Сержант" />
+              </div>
+              <div class="field f-sig">
+                <label for="report-signature-input" class="field-label">Подпись</label>
+                <input type="text" id="report-signature-input" class="input" placeholder="Т. Шагалов" />
+              </div>
+            </div>
+          </section>
+
+          <section class="block final-report-section" id="promo-final-report" style="display:none;" aria-labelledby="report-heading-text">
+            <header class="block-head">
+              <span class="block-num">04</span>
+              <div>
+                <h2 class="block-title" id="report-heading-text">Рапорт</h2>
+                <p class="block-desc">BBCode обновляется сам. Скопируйте и вставьте в тему на форуме.</p>
+              </div>
+            </header>
+            <div class="code-panel">
+              <div class="code-head">
+                <span class="code-lang"><span class="code-dot" aria-hidden="true"></span>BBCode · форум</span>
+                <button type="button" class="btn btn-ghost btn-sm" id="btn-copy-report-mini" title="Копировать BBCode">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Копировать
+                </button>
+              </div>
+              <textarea id="bbcode-output-textarea" class="bbcode-textarea" readonly spellcheck="false" placeholder="Здесь появится рапорт"></textarea>
+            </div>
+          </section>
+        </div>
+
+        <aside class="workspace-rail" aria-label="Сводка">
+          <div class="rank-transition-card" id="promo-rank-card" style="display:none;">
+            <span class="rail-eyebrow">Присвоение звания</span>
+            <span class="rank-from" id="promo-current-rank-val">—</span>
+            <div class="rank-line">
+              <svg class="rank-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-label="на"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span class="rank-to" id="promo-next-rank-val">—</span>
+            </div>
+            <div class="rank-sub" id="promo-rank-division-text">—</div>
+          </div>
+
+          <div class="progress-action-bar" id="promo-progress-bar" style="display:none;">
+            <div class="progress-info">
+              <div class="progress-labels">
+                <span class="progress-title">Отмечено</span>
+                <span class="progress-count" id="promo-progress-count">0 / 0</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="promo-progress-fill"></div></div>
+            </div>
+
+            <div class="report-readiness-pill" id="report-readiness-badge">
+              <span class="status-dot warning" id="report-readiness-dot"></span>
+              <span id="report-readiness-text">Рапорт не готов</span>
+            </div>
+            <div class="report-checklist-box" id="report-checklist-box"></div>
+
+            <div class="progress-actions">
+              <button type="button" class="btn btn-primary" id="promo-upload-all-btn" disabled>Загрузить в Image Chest</button>
+              <button type="button" class="btn btn-secondary" id="btn-copy-report">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Скопировать рапорт
+              </button>
+              <button type="button" class="btn-link" id="promo-reset-btn">Снять все отметки</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- ======================= СНЯТИЕ ВЗЫСКАНИЯ ======================= -->
+    <main class="view-section" id="view-sanctions">
+      <div class="page-head">
+        <div class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span>Рапорт · дисциплинарная часть</div>
+        <h1 class="page-title">Снятие взыскания</h1>
+        <p class="page-lede">Условия, сроки и скриншоты для рапорта на снятие выговора.</p>
+      </div>
+
+      <section class="selector-panel" aria-label="Подразделение и звание">
+        <div class="selector-grid">
+          <div class="field">
+            <label for="sanction-division-select" class="field-label">Подразделение</label>
+            <div class="select-wrap">
+              <select id="sanction-division-select" class="select" autocomplete="off">
+                <option value="">Выберите подразделение</option>
+              </select>
+            </div>
+            <div class="field-hint" id="sanction-division-sub-hint"></div>
+          </div>
+          <div class="field">
+            <label for="sanction-rank-select" class="field-label">Текущее звание</label>
+            <div class="select-wrap">
+              <select id="sanction-rank-select" class="select" autocomplete="off" disabled>
+                <option value="">Сначала подразделение</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="notice" role="note">
+          <svg class="notice-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>
+          <p class="notice-text" id="sanction-warning">
+            Важно! Для снятия ранее наложенного дисциплинарного взыскания (выговора), необходим рапорт на имя командира воинской части.
+          </p>
+        </div>
+      </section>
+
+      <div class="empty-state-box" id="sanction-empty-state">
+        <div class="empty-state-title">Выберите подразделение</div>
+        <ol class="howto">
+          <li><b>Подразделение и звание</b><span>Появятся условия снятия взыскания.</span></li>
+          <li><b>Скриншоты</b><span>К каждому условию — <kbd>Ctrl</kbd>+<kbd>V</kbd> работает.</span></li>
+          <li><b>Image Chest</b><span>По одной ссылке на условие.</span></li>
+        </ol>
+      </div>
+
+      <div class="workspace">
+        <div class="workspace-main">
+          <section class="block" aria-labelledby="sanction-crit-h">
+            <header class="block-head">
+              <span class="block-num">01</span>
+              <div>
+                <h2 class="block-title" id="sanction-crit-h">Условия</h2>
+                <p class="block-desc">Отметьте выполненное и прикрепите скриншоты. <kbd>Ctrl</kbd>+<kbd>V</kbd> вставляет в выделенный пункт.</p>
+              </div>
+            </header>
+            <div class="criteria-list" id="sanction-criteria-list"></div>
+          </section>
+        </div>
+
+        <aside class="workspace-rail" aria-label="Сводка">
+          <div class="rank-transition-card" id="sanction-rank-card" style="display:none;">
+            <span class="rail-eyebrow">Снятие взыскания</span>
+            <div class="rank-line">
+              <span class="rank-to" id="sanction-current-rank-val">—</span>
+            </div>
+            <div class="rank-sub" id="sanction-rank-division-text">—</div>
+          </div>
+
+          <div class="progress-action-bar" id="sanction-progress-bar" style="display:none;">
+            <div class="progress-info">
+              <div class="progress-labels">
+                <span class="progress-title">Отмечено</span>
+                <span class="progress-count" id="sanction-progress-count">0 / 0</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="sanction-progress-fill"></div></div>
+            </div>
+            <div class="progress-actions">
+              <button type="button" class="btn btn-primary" id="sanction-upload-all-btn" disabled>Загрузить в Image Chest</button>
+              <button type="button" class="btn-link" id="sanction-reset-btn">Снять все отметки</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- ======================= НАСТРОЙКИ ======================= -->
+    <main class="view-section view-narrow" id="view-settings">
+      <div class="page-head">
+        <div class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span>Только в этом браузере</div>
+        <h1 class="page-title">Настройки</h1>
+      </div>
+
+      <section class="settings-row" aria-labelledby="token-card-title">
+        <div class="settings-aside">
+          <h2 class="settings-title" id="token-card-title">Image Chest</h2>
+          <p class="settings-desc">Токен нужен, чтобы загружать скриншоты. Хранится только в этом браузере и уходит только на api.imgchest.com.</p>
+        </div>
+        <div class="settings-body">
+          <div id="image-chest-status-pill" class="status-line" role="status">
+            <span class="status-dot warning" id="imgchest-status-dot"></span>
+            <span id="imgchest-status-text">Проверка…</span>
+          </div>
+
+          <div class="field">
+            <label for="image-chest-token-input" class="field-label">Personal Access Token</label>
+            <div class="token-row">
+              <input type="password" id="image-chest-token-input" class="input mono" placeholder="Вставьте токен" autocomplete="off" spellcheck="false" />
+              <button type="button" class="btn btn-secondary" id="toggle-token-visibility-btn">Показать</button>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="save-token-btn">Сохранить</button>
+            <button type="button" class="btn btn-ghost" id="clear-token-btn">Удалить токен</button>
+          </div>
+
+          <details class="guide">
+            <summary>Где взять токен</summary>
+            <ol>
+              <li>Откройте <a href="https://imgchest.com/settings/api" target="_blank" rel="noopener noreferrer">imgchest.com/settings/api</a>.</li>
+              <li>В блоке <b>Personal Access Tokens</b> нажмите <b>Generate New Token</b>.</li>
+              <li>Скопируйте ключ, вставьте сюда и нажмите <b>Сохранить</b>.</li>
+            </ol>
+          </details>
+
+          <p class="fine">1 критерий = 1 пост · до 20 фото в посте · приватность hidden (только по ссылке)</p>
+        </div>
+      </section>
+
+      <section class="settings-row" aria-labelledby="look-card-title">
+        <div class="settings-aside">
+          <h2 class="settings-title" id="look-card-title">Оформление</h2>
+          <p class="settings-desc">Светлая «полевая» или тёмная «штабная» тема.</p>
+        </div>
+        <div class="settings-body">
+          <div class="field">
+            <label for="theme-select" class="field-label">Тема</label>
+            <div class="select-wrap">
+              <select id="theme-select" class="select">
+                <option value="auto">Как в системе</option>
+                <option value="light">Светлая</option>
+                <option value="dark">Тёмная</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-row" aria-labelledby="data-card-title">
+        <div class="settings-aside">
+          <h2 class="settings-title" id="data-card-title">Данные</h2>
+          <p class="settings-desc">Действие необратимо.</p>
+        </div>
+        <div class="settings-body">
+          <div class="danger-row">
+            <div>
+              <div class="danger-row-title">Сбросить всё</div>
+              <div class="danger-row-desc">Токен, реквизиты, прикреплённые фото и отметки.</div>
+            </div>
+            <button type="button" class="btn btn-danger" id="clear-storage-btn">Сбросить</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================= МОДАЛКИ ======================= -->
+    <div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h2 class="modal-title" id="confirm-modal-title">Загрузить в Image Chest?</h2>
+          <button type="button" class="icon-btn" id="confirm-modal-cancel" title="Закрыть" aria-label="Закрыть">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-summary-list" id="confirm-modal-summary"></div>
+          <p class="modal-note">На каждый критерий — отдельный пост и одна ссылка вида <code>imgchest.com/p/…</code></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="document.getElementById('confirm-modal').classList.remove('active');">Отмена</button>
+          <button type="button" class="btn btn-primary" id="confirm-modal-proceed">Загрузить</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="doc-security-modal" role="dialog" aria-modal="true" aria-labelledby="doc-security-modal-title">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h2 class="modal-title" id="doc-security-modal-title">Личные документы</h2>
+          <button type="button" class="icon-btn" id="doc-security-modal-close" title="Закрыть" aria-label="Закрыть">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Файлы могут содержать персональные данные и уйдут во внешний сервис Image Chest.</p>
+          <ul class="modal-list">
+            <li>Приватность <b>hidden</b> — доступ только по прямой ссылке, в каталоге не появится.</li>
+            <li>Сами файлы в браузере не сохраняются — только ссылка на пост.</li>
+          </ul>
+          <div id="doc-security-modal-info" class="modal-info"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="doc-security-btn-cancel">Отмена</button>
+          <button type="button" class="btn btn-primary" id="doc-security-btn-proceed">Понятно, загрузить</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="progress-modal" role="dialog" aria-modal="true" aria-labelledby="progress-modal-title">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h2 class="modal-title" id="progress-modal-title">Загрузка…</h2>
+        </div>
+        <div class="modal-body">
+          <div class="modal-progress-sub" id="progress-modal-sub">Отправка…</div>
+          <div class="progress-track progress-track-lg"><div class="progress-fill" id="progress-modal-fill" style="width:0%;"></div></div>
+          <p class="modal-note">Не закрывайте вкладку до конца загрузки.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="progress-modal-cancel">Прервать</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <button type="button" class="paste-indicator-pill" id="paste-indicator-pill" style="display:none;" title="Показать, куда вставится скриншот">
+      <kbd>Ctrl+V</kbd>
+      <span class="paste-arrow" aria-hidden="true">→</span>
+      <span class="paste-info-target" id="paste-target-title">Критерий 01</span>
+    </button>
+
+    <script src="./criteriaData.js?v=11"></script>
+    <script src="./imageChestService.js?v=11"></script>
+    <script src="./script.js?v=11"></script>
+  </body>
+</html>

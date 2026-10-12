@@ -1,0 +1,20 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Not part of the static site
+*.mp4
+*.pptx
+*.png
+src/
+package.json
+package-lock.json
+tsconfig.json
+vite.config.ts
+metadata.json
+.claude/
